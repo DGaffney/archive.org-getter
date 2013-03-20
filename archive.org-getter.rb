@@ -1,3 +1,4 @@
+#usage: ruby archive.org-getter.rb [TERM]
 #URL opener
 require 'open-uri'
 
@@ -5,10 +6,16 @@ require 'open-uri'
 start = 0
 ROWS = 200
 
+
+def parameterize(params)
+  "?"+URI.escape(params.collect{|k,v| "#{k}=#{v}"}.join('&'))
+end
 # incrementally download JSON files
 while start < 1000
 # don't forget to turn variable numbers into strings with .to_s
-  url = "http://archive.org/details/tv?q=%22Your%20Query%22&start=" + start.to_s + "&rows=" + ROWS.to_s + "&output=json"
+  term = URI.encode(ARGV[0])
+  params = {:start => start, :rows => ROWS, :output => "json", :q => term}
+  url = "http://archive.org/details/tv#{parameterize(params)}"
   print "fetching from " + start.to_s + "\n"
   print "  "+url + "\n"
 
